@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bokeh Effect App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+    <h1>Bokeh Effect App</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="image-input" accept="image/*">
+        <button type="button" id="apply-bokeh">Apply Bokeh Effect</button>
+    </form>
+    <img id="output-image" style="display: none;">
+    <script src="static/client.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+/* Example CSS styling to center content, separate heading and buttons, resize output image, and add margin to the image */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column; /* Align items in a column layout */
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px; /* Add margin to separate from buttons */
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+input[type="file"] {
+    margin: 10px 0;
+}
+
+button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px; /* Add margin to separate buttons from the image */
+}
+
+img {
+    max-width: 100%;
+    display: block;
+    margin: 20px auto; /* Add margin around the output image */
+    max-height: 400px; /* Set a maximum height for the output image */
+}
