@@ -9,9 +9,59 @@ app = Flask(__name__)
 # Define the upload folder
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
+def segment_image(original_image, num_segments=2, threshold=240):
+    """Segments an image using K-means clustering and returns the segmented image and blurred background.
+
+    Args:
+        original_image: The input image as a NumPy array.
+        num_segments: The number of segments to create (default: 2).
+        threshold: Threshold value for creating the binary mask (default: 240).
+        blur_kernel: Kernel size for Gaussian blurring the background (default: (15, 15)).
+
+    Returns:
+        segmented_image: The segmented image as a NumPy array.
+        blurred_background: The blurred background image as a NumPy array.
+    """
+
+    # Validate input image (example)
+    if original_image is None:
+        raise ValueError("Invalid image input")
+
+    # Convert to float32 for K-means (might be unnecessary if BGR works)
+    original_image = cv2.cvtColor(original_image,cv2.COLOR_BGR2RGB)
+    image = original_image.copy().astype(np.float32)
+
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    attempts = 10
+
+    # Run K-means clustering
+    ret, label, center = cv2.kmeans(image.reshape((-1, 3)), num_segments, None, criteria, attempts, cv2.KMEANS_PP_CENTERS)
+
+    # Reconstruct image from cluster centers
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    segmented_image = res.reshape((original_image.shape))
+
+    # Create binary mask
+    _, binary_image = cv2.threshold(segmented_image, threshold, 255, cv2.THRESH_BINARY)
+
+    # Get grayscale for further processing
+    segmented_gray = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
+
+    # Threshold and optionally invert mask
+    _, mask = cv2.threshold(segmented_gray, 1, 255, cv2.THRESH_BINARY_INV)
+
+    # Apply mask and create blurred background
+    masked_image = cv2.bitwise_and(original_image, original_image, mask=mask)
+
+    return masked_image
+
+
 def apply_bokeh_effect(input_image_path, output_image_path):
     img = cv2.imread(input_image_path)
-    result = cv2.GaussianBlur(img, (15, 15), 0)
+    obj = segment_image(img)
+    bg = cv2.GaussianBlur(img, (15, 15), 0)
+    result = cv2.add(obj, bg)
     cv2.imwrite(output_image_path, result)
 
 @app.route('/')
